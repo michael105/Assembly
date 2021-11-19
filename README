@@ -1,0 +1,60 @@
+Several assembly routines, replacing standard libc functions.
+Written for amd64, some make use of the mmx instruction sets.
+
+They are part of another project, minilib.
+
+I separate them here with the intention of having them
+used, and therefore tested; I'm open for discussions as well.
+
+Amongst other considerations I'm not that certain, having memory clobbers
+is enough. It should. And I'd prefer to have no volatile 
+asm statements.
+
+The functions are moderately optimized, my main target is the resulting
+binary's size.
+
+Most of the routines are benchmarked, and way faster than (naive) c pendants.
+(Up to 100 times).
+However, the benchmarks are more sort of an educated guess,
+and I'm aiming first hand for size optimization.
+
+
+In the folder devel I collect experiments, which showed up to either don't work,
+or not giving any advantage. 
+Possibly they are of some other use.
+
+
+All functions come with two files;
+one is the pure assembly.
+The other .c file has the c definition and the basic asm statement,
+labels are renamed to the prefix _filename_LABEL.
+
+The .c files are generated automatically from the .s assembly files.
+Labels are renamed, to be able to include several .c files into one object file,
+but beeing able to write shorthand labels.
+
+
+Probably you have to redefine the function names, to use the routines along with another standard libc.
+
+e.g. 
+```
+#define bzero xbzero
+#include "bzero.c"
+```
+
+
+
+For benchmarking, the macros SETUPBENCH( int seconds ) and BENCH( src ) are included.
+
+SETUPBENCH sets the environment, and BENCH( src ) runs src for "seconds" time.
+
+It is important to make sure, src is not optimized out,
+the caches haven't been my concern.
+So, this is more sort of a guess. 
+
+For a real speed optimization, the special usecase would have to be regarded anyways.
+
+
+
+
+
