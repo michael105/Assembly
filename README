@@ -1,7 +1,9 @@
 Several assembly routines, replacing standard libc functions.
 Written for amd64, some make use of the mmx instruction sets.
 
-They are part of another project, minilib.
+Abi system V.(Linux,gcc)
+
+They are originally part of another project, minilib.
 
 I separate them here with the intention of having them
 used, and therefore tested; I'm open for discussions as well.
