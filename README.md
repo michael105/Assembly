@@ -1,12 +1,11 @@
-Several assembly routines, replacing standard libc functions.
+Assembly routines, replacements for standard libc functions.
 Written for amd64, some make use of the mmx instruction sets.
 
 Abi system V.(Linux,gcc)
 
 They are originally part of another project, minilib.
 
-I separate them here with the intention of having them
-used, and therefore tested; I'm open for discussions as well.
+I separate them here for some research.
 
 Amongst other considerations I'm not that certain, having memory clobbers
 is enough. It should. And I'd prefer to have no volatile 
@@ -24,6 +23,41 @@ and I'm aiming first hand for size optimization.
 In the folder devel I collect experiments, which showed up to either don't work,
 or not giving any advantage. 
 Possibly they are of some other use.
+
+----
+
+The benchmarkroutines in bench2.c are subject to research, as well. 
+
+They are written to measure the cpu performance of a function.
+The first rounds within x seconds are dropped (memory reads, and the cpu might scale up),
+past that it is counted, how often a function can run within y seconds.
+
+A .dat file is written, which can be plotted by gnuplot.
+
+It's useful already, but some playground.
+
+There has been some interesting results:
+
+the plot below shows the reslts of bzero.
+
+The sse2 function is way faster, than stosb. (Writing into the cache)
+Albite stosb is the shortest in opcodes.
+
+The sharp edges of the sse2 versions are the result of having the memory area aligned to 
+multiples of 16, or not.
+
+One minor edge, with stosb, might be again the result of the memory area exceeding l1 cache.
+
+[bzero.jpg]
+
+
+
+
+
+
+----
+
+
 
 
 All functions come with two files;

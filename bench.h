@@ -1,5 +1,5 @@
 
-/*This is for copy and paste,
+/*This is for copy and paste.
  essentially, themacro BENCH try's to get the cpu running
  by running an empty loop for half a second,
  afterwards it is counted how often 'src' can be runned
