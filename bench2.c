@@ -144,7 +144,6 @@ int main(int argc, char **argv){
 
 	signal( SIGVTALRM, sigalrm );
 	//struct itimerval itv = { {0,200000},{1,0} }; // second time: warmup ( cpuclock, etc )
-	//struct itimerval itv = { {0,200000},{0,500000} }; // second time: warmup ( cpuclock, etc )
 	struct itimerval itv = { {0,50000},{0,500000} }; // second time: warmup ( cpuclock, etc )
 	
 
