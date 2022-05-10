@@ -3,6 +3,7 @@ COMPILE fprintf printf fopen ultodec ultohex signal itodec \
 	fclose malloc_brk 
 
 mini_buf 4000
+STRIPFLAG " "
 
 return
 #endif
@@ -141,14 +142,14 @@ int main(int argc, char **argv){
 	//char __attribute__((aligned(16)))buf[32000];
 #define BUFFER 1024*1024*64
 	char *buf = malloc_brk( BUFFER ) ;
-	 buf = buf - ( (long)buf%16 ) + 16; // align
+	 buf = buf - ( (long)buf%64 ) + 64; // align
 	printf("buf: %p\n",buf);
 //	char *buf = &_buf[0];
 	long count = 0;
 
 	signal( SIGVTALRM, sigalrm );
-	//struct itimerval itv = { {0,200000},{1,0} }; // second time: warmup ( cpuclock, etc )
-	struct itimerval itv = { {0,50000},{0,500000} }; // second time: warmup ( cpuclock, etc )
+	struct itimerval itv = { {0,200000},{1,0} }; // second time: warmup ( cpuclock, etc )
+	//struct itimerval itv = { {0,50000},{0,500000} }; // second time: warmup ( cpuclock, etc )
 	
 
 	//FILE *f1 = fopen("bzero.dat","w");
@@ -166,6 +167,32 @@ int main(int argc, char **argv){
 #if 1
 
 	fprintf(f1,"x \"stosb aligned\" \"sse2+stosb aligned\" \"stosb unaligned\" \"stosb+sse2+stosb unaligned\"\n");
+	for ( int a = 16; a<(1024*1024)*4; a+=a ){
+		count = fbench(&bzero, buf, a );
+		printf("amd64 align %5d - %lu\n",a,count);
+		fprintf( f1, "%d %lu",a, count );
+		count = fbench(&bzero_sse2, buf, a );
+		printf("sse2 align  %5d - %lu\n",a,count);
+		fprintf( f1, " %lu", count );
+
+		count = fbench(&bzero, buf+8, a );
+		printf("amd64       %5d - %lu\n",a,count);
+		fprintf( f1, " %lu", count );
+		count = fbench(&bzero_sse2, buf+8, a );
+		printf("sse2        %5d - %lu\n",a,count);
+		fprintf( f1, " %lu\n", count );
+		
+		/*
+		This doesn't show anything new..
+		if ( !(a%16) ){
+			count = fbench(&bzero_sse2, buf, a );
+			printf("sse2 aligned  %5d - %lu\n",a,count);
+			fprintf( f2, "%d %lu\n",a,count );
+		} */
+
+	}
+
+
 	for ( int a = 1024*1024; a<=BUFFER; a+=(1024*1024)*4 ){
 		count = fbench(&bzero, buf, a );
 		printf("amd64 align %5d - %lu\n",a,count);
@@ -174,10 +201,10 @@ int main(int argc, char **argv){
 		printf("sse2 align  %5d - %lu\n",a,count);
 		fprintf( f1, " %lu", count );
 
-		count = fbench(&bzero, buf+1, a );
+		count = fbench(&bzero, buf+8, a );
 		printf("amd64       %5d - %lu\n",a,count);
 		fprintf( f1, " %lu", count );
-		count = fbench(&bzero_sse2, buf+1, a );
+		count = fbench(&bzero_sse2, buf+8, a );
 		printf("sse2        %5d - %lu\n",a,count);
 		fprintf( f1, " %lu\n", count );
 		

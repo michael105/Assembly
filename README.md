@@ -67,6 +67,14 @@ just now, I'm a bit buffled.
 
 
 
+Worse, the code for the sse2 bzero comes with 77 Bytes, stosb 6 Bytes - which would fit very well into a macro.
+This would even save the function call overhead. 
+So, for small sizes as well, there might be no real performance gain.
+
+I'm going to bed.
+
+
+
 
 ----
 
