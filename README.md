@@ -48,7 +48,7 @@ multiples of 16, or not.
 
 One minor edge, with stosb, might be again the result of the memory area exceeding l1 cache.
 
-[bzero.jpg]
+![bzero.jpg](bzero.jpg)
 
 
 
