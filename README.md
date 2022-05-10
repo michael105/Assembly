@@ -51,6 +51,19 @@ One minor edge, with stosb, might be again the result of the memory area exceedi
 ![bzero.jpg](bzero.jpg)
 
 
+However - that's the cache.
+Quite disappointing, as soon the cache is exceeded, the sse2 instructions don't have any advantage
+in this uscase. 
+
+Surprisingly, now the unaligned (neither beginning, or end of the memory area) stosb is fastest.
+
+I've got no clue. 
+
+Someone else did have the same observations, unaligned memeory access seems quite often to be faster than 
+aligned. 
+
+just now, I'm a bit buffled.
+
 
 
 

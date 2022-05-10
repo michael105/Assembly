@@ -1,6 +1,6 @@
 #if 0
 COMPILE fprintf printf fopen ultodec ultohex signal itodec \
-	fclose
+	fclose malloc_brk 
 
 mini_buf 4000
 
@@ -138,7 +138,11 @@ bzero_sse2:
 
 int main(int argc, char **argv){
 
-	char __attribute__((aligned(16)))buf[32000];
+	//char __attribute__((aligned(16)))buf[32000];
+#define BUFFER 1024*1024*64
+	char *buf = malloc_brk( BUFFER ) ;
+	 buf = buf - ( (long)buf%16 ) + 16; // align
+	printf("buf: %p\n",buf);
 //	char *buf = &_buf[0];
 	long count = 0;
 
@@ -147,8 +151,8 @@ int main(int argc, char **argv){
 	struct itimerval itv = { {0,50000},{0,500000} }; // second time: warmup ( cpuclock, etc )
 	
 
-	FILE *f1 = fopen("bzero.dat","w");
-	FILE *f2 = fopen("bzero.dat2","w");
+	//FILE *f1 = fopen("bzero.dat","w");
+	FILE *f1 = fopen("bzero.dat3","w");
 	setitimer( ITIMER_VIRTUAL, &itv, 0 );
 	int values[] = { 1,2,4,8,16,32,64,128 ,512,1024,4000,4096,8000,0 };
 	//int values[] = { 1,2,4,8,16,32,64,128 };//,512,1024,4000,4096,8000,0 };
@@ -162,7 +166,7 @@ int main(int argc, char **argv){
 #if 1
 
 	fprintf(f1,"x \"stosb aligned\" \"sse2+stosb aligned\" \"stosb unaligned\" \"stosb+sse2+stosb unaligned\"\n");
-	for ( int a = 0; a<=132; a+=4 ){
+	for ( int a = 1024*1024; a<=BUFFER; a+=(1024*1024)*4 ){
 		count = fbench(&bzero, buf, a );
 		printf("amd64 align %5d - %lu\n",a,count);
 		fprintf( f1, "%d %lu",a, count );
@@ -203,6 +207,6 @@ int main(int argc, char **argv){
 #endif
 
 	fclose(f1);
-	fclose(f2);
+	//fclose(f2);
 	return(0);
 }
