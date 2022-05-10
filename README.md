@@ -74,11 +74,25 @@ So, for small sizes as well, there might be no real performance gain.
 I'm going to bed.
 
 
+So - I gave rep stosq a try. (just write 8 bytes at once, with 64bit).
 
+It is faster than rep stosb - however, the gain is below 10%.
+
+So - I prooved once again, optimizations have very often surprising results.
+
+In the case of bzero, the optimization for code size, this will pay out. about a tenth, 6 Bytes, for a function eventually frequently used,
+will have its effects.
+
+For a database, however, the benchmarks would need to be redone with real use cases.
+
+Somehow, someone did tell me something like this, some time ago..
 
 ----
 
 
+below doesn't fit the code, I leave it there, anyways.
+
+The most recent code is in bench2.c.
 
 
 All functions come with two files;

@@ -92,6 +92,18 @@ bzero:
 	retq
 )" );
 
+
+void bzero64( void *s, unsigned int n ); 
+asm( R"(
+bzero64:
+	xor %rax,%rax
+	mov %esi,%ecx
+	rep stosq 
+	retq
+)" );
+
+
+
 void bzero_sse2(void *s, int n);
 asm( R"(
 bzero_sse2: 
@@ -166,7 +178,9 @@ int main(int argc, char **argv){
 
 #if 1
 
-	fprintf(f1,"x \"stosb aligned\" \"sse2+stosb aligned\" \"stosb unaligned\" \"stosb+sse2+stosb unaligned\"\n");
+	fprintf(f1,"x \"stosb aligned\" \"sse2+stosb aligned\" \"stosb unaligned\" \"stosb+sse2+stosb unaligned\" \"stosq64\"\n");
+
+#if 0
 	for ( int a = 16; a<(1024*1024)*4; a+=a ){
 		count = fbench(&bzero, buf, a );
 		printf("amd64 align %5d - %lu\n",a,count);
@@ -191,9 +205,11 @@ int main(int argc, char **argv){
 		} */
 
 	}
+#endif
 
 
-	for ( int a = 1024*1024; a<=BUFFER; a+=(1024*1024)*4 ){
+	//for ( int a = 1024*1024; a<=BUFFER; a+=a ){ //a+=(1024*1024)*4 ){
+	for ( int a = 1024*1024*16; a<=BUFFER; a+=a ){ //a+=(1024*1024)*4 ){
 		count = fbench(&bzero, buf, a );
 		printf("amd64 align %5d - %lu\n",a,count);
 		fprintf( f1, "%d %lu",a, count );
@@ -206,8 +222,12 @@ int main(int argc, char **argv){
 		fprintf( f1, " %lu", count );
 		count = fbench(&bzero_sse2, buf+8, a );
 		printf("sse2        %5d - %lu\n",a,count);
-		fprintf( f1, " %lu\n", count );
+		fprintf( f1, " %lu", count );
 		
+		count = fbench(&bzero64, buf, a/8 );
+		printf("bzero64     %5d - %lu\n",a,count);
+		fprintf( f1, " %lu\n", count );
+	
 		/*
 		This doesn't show anything new..
 		if ( !(a%16) ){
